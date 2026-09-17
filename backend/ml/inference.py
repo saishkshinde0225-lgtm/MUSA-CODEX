@@ -3,14 +3,6 @@ import json
 import torch
 import sys
 
-# Monkey-patch torch.distributed to avoid PEFT AttributeError on some versions
-import torch.distributed
-if not hasattr(torch.distributed, 'tensor'):
-    class DummyTensor:
-        class DTensor:
-            pass
-    torch.distributed.tensor = DummyTensor()
-
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from peft import PeftModel
 
