@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from backend.ml.inference import analyze_text
+from backend.language_agent import normalize_text
 
 app = FastAPI(
     title="OMNITRIX API",
@@ -41,7 +42,8 @@ def root():
 @app.post("/api/complaint", response_model=ComplaintResponse)
 def analyze_complaint(request: ComplaintRequest):
     # Perform actual inference using MuRIL v3
-    result = analyze_text(request.text)
+    normalized_text = normalize_text(request.text)
+    result = analyze_text(normalized_text)
     emotion = result["emotion"]
     confidence = result["confidence"]
 
