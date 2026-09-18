@@ -20,7 +20,16 @@ from peft import LoraConfig, get_peft_model, TaskType
 MODEL_NAME = "google/muril-base-cased"
 MAX_LENGTH = 128
 DATA_DIR = "backend/ml/data/processed"
-OUTPUT_DIR = "backend/ml/models/muril_emotion_v4"
+
+DRIVE_ROOT = "/content/drive/MyDrive/MUSA-CODEX_BACKUP/muril_emotion_v4"
+BACKUP_ROOT = (
+    DRIVE_ROOT
+    if os.path.exists("/content/drive/MyDrive")
+    else "backend/ml/models/muril_emotion_v4"
+)
+
+OUTPUT_DIR = os.path.join(BACKUP_ROOT, "model")
+RESULTS_DIR = os.path.join(BACKUP_ROOT, "results")
 
 class EmotionDataset(Dataset):
     def __init__(self, csv_path, tokenizer):
@@ -152,7 +161,7 @@ if lora_grad <= 0 or classifier_grad <= 0:
 model.zero_grad(set_to_none=True)
 
 args = TrainingArguments(
-    output_dir="./results_v4",
+    output_dir=RESULTS_DIR,
     num_train_epochs=3,
     per_device_train_batch_size=2,
     gradient_accumulation_steps=8,
