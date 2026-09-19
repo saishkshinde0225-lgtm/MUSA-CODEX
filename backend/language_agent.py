@@ -6,9 +6,8 @@ import urllib.request
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODEL = os.getenv(
     "OPENROUTER_MODEL",
-    "qwen/qwen3-8b:free"
+    "qwen/qwen3-8b"
 )
-
 SYSTEM_PROMPT = """You are the language normalization layer for OMNITRIX.
 
 Convert the student's message into clear natural English for the downstream emotion-classification model.
@@ -48,7 +47,7 @@ def normalize_text(text: str) -> str:
                 "content": text
             }
         ],
-        "temperature": 0.0,
+        "temperature": 0.6,
         "max_tokens": 256
     }
 

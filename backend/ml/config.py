@@ -12,7 +12,7 @@ LEARNING_RATE = 5e-5
 # Paths
 RAW_DATA_PATH = "backend/ml/data/raw/emotion_hinghlish_dataset.xlsx"
 PROCESSED_DIR = "backend/ml/data/processed"
-MODEL_SAVE_PATH = "backend/ml/models/muril_emotion_v3"
+MODEL_SAVE_PATH = "backend/ml/models/muril_emotion_v5b/model"
 
 # Device Detection
 def get_device():
