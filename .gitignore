@@ -20,3 +20,5 @@ app/build/
 .env
 .env.*
 !.env.example
+admin-frontend/.env
+admin-frontend/dist/
