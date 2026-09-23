@@ -9,9 +9,9 @@ def test_direct_identifiers_are_masked():
 
     result = transform_for_privacy(text)
 
-    assert "[email]" in result
-    assert "[phone]" in result
-    assert "[student_id]" in result
+    assert "[EMAIL]" in result
+    assert "[PHONE]" in result
+    assert "[STUDENT_ID]" in result
     assert "test@example.com" not in result
     assert "9876543210" not in result
     assert "202312345678" not in result
@@ -20,7 +20,7 @@ def test_direct_identifiers_are_masked():
 def test_social_handle_is_masked():
     result = transform_for_privacy("Message me @student123")
 
-    assert "[handle]" in result
+    assert "[HANDLE]" in result
     assert "@student123" not in result
 
 
@@ -39,4 +39,32 @@ def test_capitalization_is_normalized():
 
 
 def test_empty_input():
+
     assert transform_for_privacy("") == ""
+
+def test_contextual_person_identifier_is_masked():
+    result = transform_for_privacy(
+        "Professor Amit Sharma keeps calling me to his office."
+    )
+
+    assert "amit sharma" not in result
+    assert "[PERSON]" in result
+
+
+def test_contextual_location_identifier_is_masked():
+    result = transform_for_privacy(
+        "This happened in Room 304 of the boys hostel."
+    )
+
+    assert "room 304" not in result
+    assert "[LOCATION]" in result
+
+
+def test_class_division_identifier_is_masked():
+    result = transform_for_privacy(
+        "I am from TE AIML division A and they keep targeting our class."
+    )
+
+    assert "te aiml" not in result
+    assert "division a" not in result
+    assert "[ACADEMIC_CONTEXT]" in result
