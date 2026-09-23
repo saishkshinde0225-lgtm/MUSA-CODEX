@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 from backend.ml.inference import analyze_text
 from backend.language_agent import normalize_text
 from backend.privacy.transformer import transform_for_privacy
+
 
 app = FastAPI(
     title="OMNITRIX API",
@@ -10,14 +12,22 @@ app = FastAPI(
     version="0.1.0",
 )
 
+
 class ComplaintRequest(BaseModel):
     text: str
+    category: str | None = None
+    location: str | None = None
+    timeframe: str | None = None
+    desired_action: str | None = None
+    urgency: str | None = None
+
 
 class ComplaintResponse(BaseModel):
     risk_level: str
     distress_category: str
     emotion: str
     confidence: float
+
 
 def map_emotion_to_risk(emotion: str):
     high_risk = {"disapproval", "anger", "disgust", "fear"}
@@ -33,6 +43,7 @@ def map_emotion_to_risk(emotion: str):
     else:
         return "LOW", "NEUTRAL"
 
+
 @app.get("/")
 def root():
     return {
@@ -40,12 +51,14 @@ def root():
         "status": "online",
     }
 
+
 @app.post("/api/complaint", response_model=ComplaintResponse)
 def analyze_complaint(request: ComplaintRequest):
-    # Perform actual inference using MuRIL v3
+    # Privacy transformation happens before normalization and MuRIL V5-B inference.
     privacy_safe_text = transform_for_privacy(request.text)
     normalized_text = normalize_text(privacy_safe_text)
     result = analyze_text(normalized_text)
+
     emotion = result["emotion"]
     confidence = result["confidence"]
 
@@ -55,13 +68,5 @@ def analyze_complaint(request: ComplaintRequest):
         risk_level=risk_level,
         distress_category=distress_category,
         emotion=emotion,
-        confidence=confidence
+        confidence=confidence,
     )
-
-@app.post("/api/complaint", response_model=ComplaintResponse)
-def analyze_complaint(request: ComplaintRequest):
-    privacy_safe_text = transform_for_privacy(request.text)
-    normalized_text = normalize_text(privacy_safe_text)
-    result = analyze_text(normalized_text)
-
-    # existing risk mapping / response code stays unchanged
