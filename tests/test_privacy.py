@@ -151,3 +151,50 @@ def test_semantic_words_are_not_damaged():
     result = transform_for_privacy(text)
 
     assert result == "the student needs immediate assistance."
+
+def test_cross_complaint_punctuation_variants_are_linkage_safe():
+    complaint_a = "They keep threatening me!!! I am scared..."
+    complaint_b = "They keep threatening me! I am scared."
+
+    result_a = transform_for_privacy(complaint_a)
+    result_b = transform_for_privacy(complaint_b)
+
+    assert result_a == result_b
+
+
+def test_cross_complaint_style_variants_are_linkage_safe():
+    complaint_a = "THEY ARE SOOOO THREATENING ME!!!"
+    complaint_b = "they are so threatening me."
+
+    result_a = transform_for_privacy(complaint_a)
+    result_b = transform_for_privacy(complaint_b)
+
+    assert result_a == result_b
+
+
+def test_cross_complaint_whitespace_variants_are_linkage_safe():
+    complaint_a = "They   keep   threatening   me."
+    complaint_b = "They keep threatening me."
+
+    result_a = transform_for_privacy(complaint_a)
+    result_b = transform_for_privacy(complaint_b)
+
+    assert result_a == result_b
+
+
+def test_cross_complaint_identifier_variants_are_masked():
+    complaint_a = "Professor Amit Sharma called me in Room 304."
+    complaint_b = "Professor Rahul Patil called me in Room 205."
+
+    result_a = transform_for_privacy(complaint_a)
+    result_b = transform_for_privacy(complaint_b)
+
+    assert "[PERSON]" in result_a
+    assert "[PERSON]" in result_b
+    assert "[LOCATION]" in result_a
+    assert "[LOCATION]" in result_b
+
+    assert "amit sharma" not in result_a
+    assert "rahul patil" not in result_b
+    assert "room 304" not in result_a
+    assert "room 205" not in result_b
