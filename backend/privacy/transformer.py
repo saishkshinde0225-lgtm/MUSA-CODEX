@@ -84,6 +84,10 @@ def _mask_contextual_identifiers(text: str) -> str:
 def _normalize_unicode(text: str) -> str:
     return unicodedata.normalize("NFKC", text)
 
+def _normalize_word_elongation(text: str) -> str:
+    # Collapse repeated letters used as expressive/stylometric elongation.
+    # Example: "soooo" -> "so", "pleeease" -> "please".
+    return re.sub(r"([A-Za-z])\1{2,}", r"\1", text)
 
 def _normalize_punctuation(text: str) -> str:
     # Normalize terminal punctuation so punctuation choice does not
@@ -133,6 +137,7 @@ def transform_for_privacy(text: str) -> str:
     text = _normalize_unicode(text)
     text = _mask_direct_identifiers(text)
     text = _mask_contextual_identifiers(text)
+    text = _normalize_word_elongation(text)
     text = _normalize_punctuation(text)
     text = _normalize_capitalization(text)
 

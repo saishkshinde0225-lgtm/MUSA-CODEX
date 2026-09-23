@@ -39,8 +39,8 @@ def test_capitalization_is_normalized():
 
 
 def test_empty_input():
-
     assert transform_for_privacy("") == ""
+
 
 def test_contextual_person_identifier_is_masked():
     result = transform_for_privacy(
@@ -68,6 +68,7 @@ def test_class_division_identifier_is_masked():
     assert "te aiml" not in result
     assert "division a" not in result
     assert "[ACADEMIC_CONTEXT]" in result
+
 
 def test_punctuation_style_is_removed():
     text_a = "They keep threatening me!!! I am scared..."
@@ -109,3 +110,44 @@ def test_stylometric_variants_preserve_semantic_content():
     assert result_a == result_b
     assert "threatening" in result_a
     assert "me" in result_a
+
+
+def test_word_elongation_style_is_removed():
+    text_a = "They are soooo threatening me."
+    text_b = "They are so threatening me."
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+
+
+def test_repeated_letter_style_is_removed():
+    text_a = "pleeease help me"
+    text_b = "please help me"
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+
+
+def test_word_elongation_preserves_normal_words():
+    text = "The committee will assess the complaint."
+    result = transform_for_privacy(text)
+
+    assert result == "the committee will assess the complaint."
+
+
+def test_multilingual_text_is_preserved():
+    text = "Mujhe bahut dar lag raha hai."
+    result = transform_for_privacy(text)
+
+    assert result == "mujhe bahut dar lag raha hai."
+
+
+def test_semantic_words_are_not_damaged():
+    text = "The student needs immediate assistance."
+    result = transform_for_privacy(text)
+
+    assert result == "the student needs immediate assistance."
