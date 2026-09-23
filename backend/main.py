@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from backend.ml.inference import analyze_text
 from backend.language_agent import normalize_text
+from backend.privacy.transformer import transform_for_privacy
 
 app = FastAPI(
     title="OMNITRIX API",
@@ -42,7 +43,8 @@ def root():
 @app.post("/api/complaint", response_model=ComplaintResponse)
 def analyze_complaint(request: ComplaintRequest):
     # Perform actual inference using MuRIL v3
-    normalized_text = normalize_text(request.text)
+    privacy_safe_text = transform_for_privacy(request.text)
+    normalized_text = normalize_text(privacy_safe_text)
     result = analyze_text(normalized_text)
     emotion = result["emotion"]
     confidence = result["confidence"]
@@ -55,3 +57,11 @@ def analyze_complaint(request: ComplaintRequest):
         emotion=emotion,
         confidence=confidence
     )
+
+@app.post("/api/complaint", response_model=ComplaintResponse)
+def analyze_complaint(request: ComplaintRequest):
+    privacy_safe_text = transform_for_privacy(request.text)
+    normalized_text = normalize_text(privacy_safe_text)
+    result = analyze_text(normalized_text)
+
+    # existing risk mapping / response code stays unchanged
