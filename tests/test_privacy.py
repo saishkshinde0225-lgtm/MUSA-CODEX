@@ -68,3 +68,44 @@ def test_class_division_identifier_is_masked():
     assert "te aiml" not in result
     assert "division a" not in result
     assert "[ACADEMIC_CONTEXT]" in result
+
+def test_punctuation_style_is_removed():
+    text_a = "They keep threatening me!!! I am scared..."
+    text_b = "They keep threatening me! I am scared."
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+
+
+def test_capitalization_style_is_removed():
+    text_a = "THEY KEEP THREATENING ME"
+    text_b = "they keep threatening me"
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+
+
+def test_whitespace_style_is_removed():
+    text_a = "They   keep   threatening   me."
+    text_b = "They keep threatening me."
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+
+
+def test_stylometric_variants_preserve_semantic_content():
+    text_a = "THEY KEEP THREATENING ME!!!"
+    text_b = "they keep threatening me."
+
+    result_a = transform_for_privacy(text_a)
+    result_b = transform_for_privacy(text_b)
+
+    assert result_a == result_b
+    assert "threatening" in result_a
+    assert "me" in result_a

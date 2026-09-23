@@ -86,7 +86,11 @@ def _normalize_unicode(text: str) -> str:
 
 
 def _normalize_punctuation(text: str) -> str:
-    # Collapse repeated punctuation that can act as a writing-style fingerprint.
+    # Normalize terminal punctuation so punctuation choice does not
+# become a stylometric fingerprint.
+    text = re.sub(r"[.!?]+(?=\s*$)", ".", text)
+
+# Collapse repeated punctuation elsewhere.
     text = re.sub(r"!{2,}", "!", text)
     text = re.sub(r"\?{2,}", "?", text)
     text = re.sub(r"\.{2,}", ".", text)
