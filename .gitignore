@@ -17,3 +17,6 @@ app/build/
 **/__pycache__/
 *.log
 *.pyc
+.env
+.env.*
+!.env.example
